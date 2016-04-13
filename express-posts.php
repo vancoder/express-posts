@@ -2,11 +2,11 @@
 
 /*
   Plugin Name: Express Posts
-  Plugin URI: http://vancoder.ca/plugins/express-posts
-  Description: A brief description of the Plugin.
-  Version: 1.2
-  Author: Vancoder
-  Author URI: http://vancoder.ca
+  Plugin URI: https://wordpress.org/plugins/express-posts/
+  Description: Express posts provides a widget to display either a subset of posts, the children of a page or its siblings.
+  Version: 1.3.0
+  Author: Grant Mangham
+  Author URI: http://begtodiffer.ca
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License, version 2, as
@@ -24,21 +24,22 @@
 
 class Express_Posts extends WP_Widget {
 
-	function __construct() {
-		$widget_ops = array( 'classname' => 'express_posts', 'description' => 'Display either a subset of posts, the children of a page or it\'s siblings' );
-		$this->WP_Widget( 'express_posts', 'Express Posts', $widget_ops );
-		add_action( 'admin_print_scripts-widgets.php', array( __CLASS__, 'express_posts_scripts' ) );
+	public function __construct() {
+		$widget_ops = array(
+			'classname'   => 'express_posts',
+			'description' => 'Display either a subset of posts, the children of a page or it\'s siblings',
+		);
+		parent::__construct( 'express_posts', 'Express Posts', $widget_ops );
+		add_action( 'admin_print_scripts-widgets.php', array( $this, 'express_posts_scripts' ) );
 	}
 
 	function express_posts_scripts() {
-		global $pagenow;
-		wp_register_script( 'express-posts', plugins_url( '/express-posts.js', __FILE__ ), array( 'jquery' ), '1.0' );
-		wp_enqueue_script( 'express-posts' );
+		wp_enqueue_script( 'express-posts', plugins_url( '/express-posts.js', __FILE__ ), array( 'jquery' ), '1.0' );
 	}
 
 	function widget( $args, $instance ) {
 		global $post;
-		extract( $args, EXTR_SKIP );
+
 		$quantity = ( ( empty( $instance['quantity'] ) || ! $quantity = absint( $instance['quantity'] ) ) ? 5 : $instance['quantity'] );
 
 		$defaults = array(
@@ -48,11 +49,10 @@ class Express_Posts extends WP_Widget {
 		);
 		$instance = wp_parse_args( ( array ) $instance, $defaults );
 
-
 		switch ( $instance['relationship'] ) {
 
 			case 'subset':
-				$args = array(
+				$query_args = array(
 					'category__in'        => $instance['categories'],
 					'posts_per_page'      => $quantity,
 					'ignore_sticky_posts' => 1,
@@ -73,7 +73,7 @@ class Express_Posts extends WP_Widget {
 						break;
 					}
 				}
-				$args = array(
+				$query_args = array(
 					'post_parent'    => $post->ID,
 					'posts_per_page' => - 1,
 					'orderby'        => $instance['children_ordering'],
@@ -99,7 +99,7 @@ class Express_Posts extends WP_Widget {
 
 				if ( $ancestors ) {
 					$parent_post_id = $ancestors[0];
-					$args           = array(
+					$query_args     = array(
 						'post_parent'    => $parent_post_id,
 						'posts_per_page' => - 1,
 						'orderby'        => $instance['siblings_ordering'],
@@ -111,19 +111,17 @@ class Express_Posts extends WP_Widget {
 				break;
 		}
 
-		if ( ! isset( $args ) ) {
+		if ( ! isset( $query_args ) ) {
 			return;
 		}
 
-		$args['no_found_rows'] = true;
+		$query_args['no_found_rows'] = true;
 
-		$query = new WP_Query( $args );
+		$query = new WP_Query( $query_args );
 
 		if ( $query->posts ) {
 
-
-			echo str_replace( 'widget-container', 'widget-container express_posts-' . $instance['relationship'], $before_widget );
-
+			echo str_replace( 'widget-container', 'widget-container express_posts-' . $instance['relationship'], $args['before_widget'] );
 
 			if ( $instance['show_widget_title'] ) {
 
@@ -140,7 +138,7 @@ class Express_Posts extends WP_Widget {
 						$instance['title'] = str_ireplace( '[title]', get_the_title( $parent_post_id ), $instance['title'] );
 					}
 				}
-				echo $before_title . $instance['title'] . $after_title;
+				echo $args['before_title'] . $instance['title'] . $args['after_title'];
 			}
 
 			echo '<ul>';
@@ -169,8 +167,7 @@ class Express_Posts extends WP_Widget {
 				echo '<div class="footer">' . $instance['footer'] . '</div>';
 			}
 
-
-			echo $after_widget;
+			echo $args['after_widget'];
 		}
 
 		wp_reset_postdata();
@@ -196,7 +193,6 @@ class Express_Posts extends WP_Widget {
 			'footer'                      => '',
 		);
 		$instance = wp_parse_args( ( array ) $instance, $defaults );
-
 
 		$title = strip_tags( $instance['title'] );
 		?>
@@ -321,8 +317,6 @@ class Express_Posts extends WP_Widget {
 	}
 }
 
-function express_posts_widget_init() {
+add_action( 'widgets_init', function () {
 	register_widget( 'Express_Posts' );
-}
-
-add_action( 'widgets_init', 'express_posts_widget_init' );
+} );

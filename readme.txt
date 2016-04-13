@@ -4,8 +4,8 @@ Author URI: http://vancoder.ca/
 Plugin URI: http://vancoder.ca/plugins/express-posts
 Tags: widget, sidebar, posts, pages, children, siblings, subset
 Requires at least: 3.2.1
-Tested up to: 3.5
-Stable tag: 1.2
+Tested up to: 4.5
+Stable tag: 1.3
 
 Express posts provides a widget to display either a subset of posts, the children of a page or its siblings.
 
@@ -19,7 +19,7 @@ The widget provides three modes.
 
 *Children* and *siblings* modes will list the immediate children or siblings of a page, respectively. You can include a placeholder in the widget title as a substitute for the parent page title. You can also choose to show or hide the widget on specific generations of pages, allowing extra flexibility on shared sidebars.
 
-In common with all Vancoder plugins, Express Posts strives to follow best practice in WordPress coding. If you spy a bug or see room for improvement, please [let me know](http://wordpress.org/support/plugin/express-posts).
+In common with all of my plugins, Express Posts strives to follow best practice in WordPress coding. If you spy a bug or see room for improvement, please [let me know](http://wordpress.org/support/plugin/express-posts).
 
 == Installation ==
 
@@ -29,6 +29,11 @@ In common with all Vancoder plugins, Express Posts strives to follow best practi
 
 
 == Changelog ==
+
+= 1.3.0 =
+* Fixed notices
+* Tidied formatting
+* Removed extract
 
 = 1.2 =
 * Fixed notices
