@@ -1,6 +1,6 @@
 === Express Posts ===
 Contributors: vancoder
-Author URI: http://vancoder.ca/
+Author URI: http://begtodiffer.ca/
 Plugin URI: http://vancoder.ca/plugins/express-posts
 Tags: widget, sidebar, posts, pages, children, siblings, subset
 Requires at least: 3.2.1
